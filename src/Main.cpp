@@ -78,7 +78,7 @@ int main()
 		}
 		GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
 
-		if (GAME_INSTANCE_ELIMINATIONS >= INT_LAYERS * INT_WIDTH) break;		// End
+		if (GAME_INSTANCE_ELIMINATIONS >= INT_LAYERS * INT_WIDTH) break;		// End //
 	}
 
 	auto GAME_INSTANCE_TIMER_END = chrono::high_resolution_clock::now();		// Count elapsed time
