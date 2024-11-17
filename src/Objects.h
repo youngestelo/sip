@@ -44,7 +44,8 @@ public:
 		{
 			for (short J = 0; J < WIDTH; J++)
 			{
-				if (GRID[I][J] != '.') { CC(7); cout << GRID[I][J]; CC(0); }
+				if (GRID[I][J] == (char)219) { CC(7); cout << GRID[I][J]; CC(0); }
+				else if (GRID[I][J] == (char)186) { CC(3); cout << GRID[I][J]; CC(0); }
 				else cout << GRID[I][J];
 			}
 			cout << endl;
@@ -140,6 +141,37 @@ public:
 
 			Sleep(150);
 		}
+		system("cls");
+		displayFrame(*_gip, *_gie, GridHandle);
+		displayMovementLayer();
+	}
+
+	void MirrorShot(unsigned int* _gip, unsigned int* _gie)	  // Shot from aliens
+	{
+		srand(time(NULL));
+		int ShotPosition = 0 + rand() % GridHandle.getWidth();
+
+		unsigned short CURRENT_LAYER = GridHandle.getLayers() - 3;
+		GridHandle.getGrid()[CURRENT_LAYER][ShotPosition] = (char)186;
+
+		Sleep(150);
+		for (auto I = 0; I < 2; I++)
+		{
+			system("cls");
+			displayFrame(*_gip, *_gie, GridHandle);
+			displayMovementLayer();
+			Sleep(150);
+			swap(GridHandle.getGrid()[CURRENT_LAYER][ShotPosition], GridHandle.getGrid()[CURRENT_LAYER + 1][ShotPosition]);
+			CURRENT_LAYER++;
+		}
+		system("cls");
+		displayFrame(*_gip, *_gie, GridHandle);
+		displayMovementLayer();
+
+		if (MovementLayer[ShotPosition] == (char)254) { (*_gip >= 50) ? *_gip -= 50 : *_gip = 0; } // Player has been found
+
+		GridHandle.getGrid()[CURRENT_LAYER][ShotPosition] = '.';
+		Sleep(150);
 		system("cls");
 		displayFrame(*_gip, *_gie, GridHandle);
 		displayMovementLayer();

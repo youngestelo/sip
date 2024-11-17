@@ -72,6 +72,8 @@ int main()
 			else if (KEYWORD == 72)
 			{
 				GAME_INSTANCE_PLAYER.shotRaycast(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS);
+				srand(time(NULL)); short MirrorShotSuccess = 0 + rand() % 2;
+				if (MirrorShotSuccess == 0) GAME_INSTANCE_PLAYER.MirrorShot(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS);
 			}
 		}
 		GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
