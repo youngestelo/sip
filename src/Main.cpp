@@ -20,6 +20,7 @@ void displayFrame(unsigned int gip, unsigned int gie, Grid& gig, Player& giplr)
 
 int main()
 {
+	SetConsoleTitleA("Space Invaders Plus");
 	_art_sip_small();												// Display Logo-Art & Menu
 	unsigned int MENU_CHOICE, INT_LAYERS, INT_WIDTH;
 	try
