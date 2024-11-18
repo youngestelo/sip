@@ -10,9 +10,10 @@ class Grid
 	const unsigned int LAYERS;
 	const unsigned int WIDTH;
 protected:
+	unsigned int FREE_SPACE;
 	char** GRID;
 public:
-	Grid(unsigned int _L, unsigned int _W) : LAYERS{ _L + 3 }, WIDTH{ _W }
+	Grid(unsigned int _L, unsigned int _W) : LAYERS{ _L + 5 }, WIDTH{ _W }, FREE_SPACE {5}
 	{
 		GRID = new char* [LAYERS];
 		for (short I = 0; I < LAYERS; I++)	// Initialize grid layout
@@ -20,7 +21,7 @@ public:
 			GRID[I] = new char[WIDTH];
 			for (short J = 0; J < WIDTH; J++)
 			{
-				if (I < LAYERS - 3) GRID[I][J] = (char)248;
+				if (I < LAYERS - FREE_SPACE) GRID[I][J] = (char)248;
 				else GRID[I][J] = '.';
 			}
 		}
@@ -29,7 +30,7 @@ public:
 	void displayGrid()
 	{
 		CC(0);
-		for (short I = 0; I < LAYERS - 3; I++)
+		for (short I = 0; I < LAYERS - FREE_SPACE; I++)
 		{
 			for (short J = 0; J < WIDTH; J++)
 			{
@@ -40,12 +41,13 @@ public:
 		}
 
 		CC(0);	// Trajectory color
-		for (short I = LAYERS - 3; I < LAYERS; I++)
+		for (short I = LAYERS - FREE_SPACE; I < LAYERS; I++)
 		{
 			for (short J = 0; J < WIDTH; J++)
 			{
 				if (GRID[I][J] == (char)219) { CC(7); cout << GRID[I][J]; CC(0); }
 				else if (GRID[I][J] == (char)186) { CC(3); cout << GRID[I][J]; CC(0); }
+				else if (GRID[I][J] == (char)248) { CC(15); cout << GRID[I][J]; CC(0); }
 				else cout << GRID[I][J];
 			}
 			cout << endl;
@@ -61,6 +63,7 @@ public:
 
 	const unsigned int getLayers() { return LAYERS; }
 	const unsigned int getWidth() { return WIDTH; }
+	const unsigned int getFreeSpace() { return FREE_SPACE; }
 	char** getGrid() { return GRID; }
 }; 
 
@@ -151,11 +154,11 @@ public:
 		srand(time(NULL));
 		int ShotPosition = 0 + rand() % GridHandle.getWidth();
 
-		unsigned short CURRENT_LAYER = GridHandle.getLayers() - 3;
+		unsigned short CURRENT_LAYER = GridHandle.getLayers() - GridHandle.getFreeSpace();
 		GridHandle.getGrid()[CURRENT_LAYER][ShotPosition] = (char)186;
 
 		Sleep(150);
-		for (auto I = 0; I < 2; I++)
+		for (auto I = 0; I < GridHandle.getFreeSpace() - 1; I++)
 		{
 			system("cls");
 			displayFrame(*_gip, *_gie, GridHandle);

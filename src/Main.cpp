@@ -21,6 +21,7 @@ void displayFrame(unsigned int gip, unsigned int gie, Grid& gig, Player& giplr)
 int main()
 {
 	SetConsoleTitleA("Space Invaders Plus");
+	system("cls");
 	_art_sip_small();												// Display Logo-Art & Menu
 	unsigned int MENU_CHOICE, INT_LAYERS, INT_WIDTH;
 	try
@@ -50,6 +51,7 @@ int main()
 
 	unsigned int GAME_INSTANCE_POINTS = 0;							// Initialize Values
 	unsigned int GAME_INSTANCE_ELIMINATIONS = 0;
+	unsigned int GAME_INSTANCE_TOTAL_SHOTS = 0;
 	bool		 GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
 
 	Grid		 GAME_INSTANCE_GRID(INT_LAYERS, INT_WIDTH);			// Initialize Target's Grid (Playing Field)
@@ -72,7 +74,7 @@ int main()
 			}
 			else if (KEYWORD == 72)
 			{
-				GAME_INSTANCE_PLAYER.shotRaycast(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS);
+				GAME_INSTANCE_PLAYER.shotRaycast(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS); GAME_INSTANCE_TOTAL_SHOTS++;
 				srand(time(NULL)); short MirrorShotSuccess = 0 + rand() % 2;
 				if (MirrorShotSuccess == 0) GAME_INSTANCE_PLAYER.MirrorShot(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS);
 			}
@@ -131,9 +133,12 @@ int main()
 			FILE.close();
 			break;
 		}
-		case 2: { return 0; break; }
+		case 2: { break; }
 		default: throw 0;
 		}
+
+		Sleep(2000);
+		main(); // Return
 
 	}
 	catch (...) { system("cls"); cerr << "Fatal Error! Please, restart the program.\n"; return 0; }
