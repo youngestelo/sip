@@ -13,6 +13,7 @@ protected:
 	unsigned int FREE_SPACE;
 	char** GRID;
 public:
+	Grid() : Grid(1, 1) {}
 	Grid(unsigned int _L, unsigned int _W) : LAYERS{ _L + 5 }, WIDTH{ _W }, FREE_SPACE {5}
 	{
 		GRID = new char* [LAYERS];
@@ -80,6 +81,7 @@ class Player
 	char PlayerSymbol = (char)254;
 	char* MovementLayer;
 public:
+	Player() : Player(*new Grid(1, 1)) {}
 	Player(Grid& Handler) : GridHandle{Handler}, PositionX{Handler.getWidth()/2}, MovementLayer{new char[Handler.getWidth()]}
 	{
 		for (short I = 0; I < Handler.getWidth(); I++)	// Initialize movement layer
@@ -185,5 +187,28 @@ public:
 
 };
 
+class Game : public Grid, public Player
+{
+public:
+	unsigned int GAME_INSTANCE_POINTS = 0;
+	unsigned int GAME_INSTANCE_ELIMINATIONS = 0;
+	unsigned int GAME_INSTANCE_TOTAL_SHOTS = 0;
+
+	bool		 GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
+
+	Grid		 GAME_INSTANCE_GRID;			
+	Player		 GAME_INSTANCE_PLAYER;			
+
+	Game(unsigned int _layers, unsigned int _width) :
+		GAME_INSTANCE_POINTS {0},
+		GAME_INSTANCE_ELIMINATIONS {0},
+		GAME_INSTANCE_TOTAL_SHOTS {0},
+
+		GAME_INSTANCE_SHOT_POSSIBLE {TRUE},
+
+		GAME_INSTANCE_GRID {*new Grid(_layers, _width)},
+		GAME_INSTANCE_PLAYER {*new Player(GAME_INSTANCE_GRID)}
+	{}
+};
 
 #endif

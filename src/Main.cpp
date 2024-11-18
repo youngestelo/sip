@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <Windows.h>
 #include <conio.h>
-#include <vector>
 #include <chrono>
 #include <sstream>
 #include <fstream>
@@ -10,13 +9,13 @@ using namespace std;
 #include "Art.h"
 #include "Objects.h"
 
-void displayFrame(unsigned int gip, unsigned int gie, Grid& gig, Player& giplr)
+void displayFrame(Game& _game)
 {
-	cout << " SCORE\t ELIMS\n " << gip << "\t " << gie << "\n\n";
-	gig.displayGrid();
-	giplr.displayMovementLayer();
+	cout << " SCORE\t ELIMS\n " << _game.GAME_INSTANCE_POINTS << "\t " << _game.GAME_INSTANCE_ELIMINATIONS << "\n\n";
+	_game.GAME_INSTANCE_GRID.displayGrid();
+	_game.GAME_INSTANCE_PLAYER.displayMovementLayer();
 }
-#define DISPLAYFRAME displayFrame(GAME_INSTANCE_POINTS, GAME_INSTANCE_ELIMINATIONS, GAME_INSTANCE_GRID, GAME_INSTANCE_PLAYER)
+#define DISPLAYFRAME displayFrame(GAME_INSTANCE);
 
 int main()
 {
@@ -49,39 +48,33 @@ int main()
 	catch (const char* err) { system("cls"); cerr << err; Sleep(2000); system("cls"); main(); }
 	catch (...)				{ system("cls"); cerr << "Fatal Error! Please, restart the game.\n"; return 0; }
 
-	unsigned int GAME_INSTANCE_POINTS = 0;							// Initialize Values
-	unsigned int GAME_INSTANCE_ELIMINATIONS = 0;
-	unsigned int GAME_INSTANCE_TOTAL_SHOTS = 0;
-	bool		 GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
-
-	Grid		 GAME_INSTANCE_GRID(INT_LAYERS, INT_WIDTH);			// Initialize Target's Grid (Playing Field)
-	Player		 GAME_INSTANCE_PLAYER(GAME_INSTANCE_GRID);			// Initialize Player
+	Game GAME_INSTANCE(INT_LAYERS, INT_WIDTH);	// INITIALIZE GAME (*)
 
 	auto GAME_INSTANCE_TIMER_START = chrono::high_resolution_clock::now(); // Timer start
 
 	DISPLAYFRAME;
 
-	while (GAME_INSTANCE_SHOT_POSSIBLE)
+	while (GAME_INSTANCE.GAME_INSTANCE_SHOT_POSSIBLE)
 	{
-		GAME_INSTANCE_SHOT_POSSIBLE = FALSE;
+		GAME_INSTANCE.GAME_INSTANCE_SHOT_POSSIBLE = FALSE;
 		if (_kbhit())												// Register player's keyboard input
 		{
 			int KEYWORD = static_cast<int>(_getch()); KEYWORD = _getch();
 			if (KEYWORD == 75 || KEYWORD == 77)
 			{
-				bool CLEAR_AFTER_MOVEMENT = (KEYWORD == 75) ? GAME_INSTANCE_PLAYER.movePlayer(TRUE) : GAME_INSTANCE_PLAYER.movePlayer(FALSE);
+				bool CLEAR_AFTER_MOVEMENT = (KEYWORD == 75) ? GAME_INSTANCE.GAME_INSTANCE_PLAYER.movePlayer(TRUE) : GAME_INSTANCE.GAME_INSTANCE_PLAYER.movePlayer(FALSE);
 				if (CLEAR_AFTER_MOVEMENT) { system("cls"); DISPLAYFRAME; }
 			}
 			else if (KEYWORD == 72)
 			{
-				GAME_INSTANCE_PLAYER.shotRaycast(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS); GAME_INSTANCE_TOTAL_SHOTS++;
+				GAME_INSTANCE.GAME_INSTANCE_PLAYER.shotRaycast(&GAME_INSTANCE.GAME_INSTANCE_POINTS, &GAME_INSTANCE.GAME_INSTANCE_ELIMINATIONS); GAME_INSTANCE.GAME_INSTANCE_TOTAL_SHOTS++;
 				srand(time(NULL)); short MirrorShotSuccess = 0 + rand() % 2;
-				if (MirrorShotSuccess == 0) GAME_INSTANCE_PLAYER.MirrorShot(&GAME_INSTANCE_POINTS, &GAME_INSTANCE_ELIMINATIONS);
+				if (MirrorShotSuccess == 0) GAME_INSTANCE.GAME_INSTANCE_PLAYER.MirrorShot(&GAME_INSTANCE.GAME_INSTANCE_POINTS, &GAME_INSTANCE.GAME_INSTANCE_ELIMINATIONS);
 			}
 		}
-		GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
+		GAME_INSTANCE.GAME_INSTANCE_SHOT_POSSIBLE = TRUE;
 
-		if (GAME_INSTANCE_ELIMINATIONS >= INT_LAYERS * INT_WIDTH) break;		// End //
+		if (GAME_INSTANCE.GAME_INSTANCE_ELIMINATIONS >= INT_LAYERS * INT_WIDTH) break;		// End //
 	}
 
 	auto GAME_INSTANCE_TIMER_END = chrono::high_resolution_clock::now();		// Count elapsed time
@@ -91,7 +84,7 @@ int main()
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
 	cout << "[ Congratulations! You have destroyed all targets! ]\n";
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-	cout << "[ Highscore: " << GAME_INSTANCE_POINTS << " Eliminations: " << GAME_INSTANCE_ELIMINATIONS << " ]\n";
+	cout << "[ Highscore: " << GAME_INSTANCE.GAME_INSTANCE_POINTS << " Eliminations: " << GAME_INSTANCE.GAME_INSTANCE_ELIMINATIONS << " ]\n";
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 	cout << "[ Elapsed Time: " << GAME_INSTANCE_TIMER.count() << "s ]\n";
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -112,8 +105,8 @@ int main()
 
 			stringstream SAMPLE_STREAM;
 			string MODE = (MENU_CHOICE == 1) ? "EASY" : (MENU_CHOICE == 2) ? "MEDIUM" : (MENU_CHOICE == 3) ? "MASTER" : "CUSTOM";
-			SAMPLE_STREAM << "HIGHSCORE : " << GAME_INSTANCE_POINTS << endl
-						  << "ELIMINATIONS : " << GAME_INSTANCE_ELIMINATIONS << endl
+			SAMPLE_STREAM << "HIGHSCORE : " << GAME_INSTANCE.GAME_INSTANCE_POINTS << endl
+						  << "ELIMINATIONS : " << GAME_INSTANCE.GAME_INSTANCE_ELIMINATIONS << endl
 						  << "ELAPSED TIME : " << GAME_INSTANCE_TIMER.count() << "s" << endl
 						  << "MODE : " << MODE;
 			ofstream FILE;
