@@ -187,7 +187,7 @@ public:
 
 };
 
-class Game : public Grid, public Player
+class Game
 {
 public:
 	unsigned int GAME_INSTANCE_POINTS = 0;
